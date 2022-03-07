@@ -30,6 +30,16 @@ class ProblemsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addChoice(String id, String choice) {
+    Problem _thisProblem = _problems.firstWhere((element) => element.id == id);
+    int _index = _problems.indexOf(_thisProblem);
+    List<String> newChoices = [];
+    newChoices.addAll(_problems[_index].choices);
+    newChoices.add(choice);
+    _problems[_index].choices = newChoices;
+    notifyListeners();
+  }
+
   Problem getProblemById(String id) {
     Problem getProblem = _problems.firstWhere((element) => element.id == id);
     return getProblem;

@@ -7,4 +7,8 @@ class Problem {
 
   Problem(this.id, this.name,
       {this.head = '', this.choices = const [], this.images = const []});
+
+  void setValues() {
+    choices.add('15');
+  }
 }

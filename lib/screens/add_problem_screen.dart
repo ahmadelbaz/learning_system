@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learning_system/constants.dart';
 import 'package:learning_system/screens/home_screen.dart';
 
+final isTrueStateProvider = StateProvider<bool>((ref) => false);
+
 class AddProblemScreen extends ConsumerWidget {
   const AddProblemScreen({Key? key}) : super(key: key);
 
@@ -14,6 +16,7 @@ class AddProblemScreen extends ConsumerWidget {
     final _size = MediaQuery.of(context).size;
     // watching the providers
     final _problemsProvider = ref.watch(problemsChangeNotifierProvider);
+    var _isTrue = ref.watch(isTrueStateProvider);
     // get the arguments from navigation
     final _args = ModalRoute.of(context)!.settings.arguments as String;
     log(_args);
@@ -21,6 +24,9 @@ class AddProblemScreen extends ConsumerWidget {
     TextEditingController _nameTextEditingController = TextEditingController();
     // controller for problem head textfield
     TextEditingController _headTextEditingController = TextEditingController();
+    // controller for problem head textfield
+    TextEditingController _textValueTextEditingController =
+        TextEditingController();
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -29,6 +35,7 @@ class AddProblemScreen extends ConsumerWidget {
             : _problemsProvider.getProblemById(_args).name),
       ),
       body: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
         children: [
           SizedBox(
             height: _size.height * 0.02,
@@ -40,6 +47,37 @@ class AddProblemScreen extends ConsumerWidget {
                   : _problemsProvider.getProblemById(_args).head,
               style: const TextStyle(fontSize: 18),
             ),
+          ),
+          SizedBox(
+            height: _size.height * 0.02,
+          ),
+          SizedBox(
+            width: _size.width,
+            height: _size.height * 0.1,
+            child: ListView.builder(
+                physics: const ClampingScrollPhysics(),
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemCount:
+                    _problemsProvider.getProblemById(_args).choices.length,
+                itemBuilder: (context, index) {
+                  return SizedBox(
+                    width: _size.width * 0.4,
+                    child: RadioListTile(
+                      title: FittedBox(
+                        child: Text(
+                          _problemsProvider
+                              .getProblemById(_args)
+                              .choices[index],
+                          style: const TextStyle(fontSize: 22),
+                        ),
+                      ),
+                      value: false,
+                      groupValue: true,
+                      onChanged: (value) {},
+                    ),
+                  );
+                }),
           ),
           SizedBox(
             height: _size.height * 0.02,
@@ -100,6 +138,58 @@ class AddProblemScreen extends ConsumerWidget {
               ],
             ),
           ),
+          ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) =>
+                      StatefulBuilder(builder: (context, setState) {
+                    return AlertDialog(
+                      title: const Text('Add variable'),
+                      content: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _textValueTextEditingController,
+                              decoration: InputDecoration(
+                                labelText: 'Value',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  borderSide: const BorderSide(),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Checkbox(
+                              value: _isTrue,
+                              onChanged: (value) {
+                                setState(() {
+                                  _isTrue = value!;
+                                });
+                              })
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            _problemsProvider.addChoice(
+                                _args, _textValueTextEditingController.text);
+                          },
+                          child: const Text('Add'),
+                        ),
+                      ],
+                    );
+                  }),
+                );
+              },
+              child: const Text('Add choice'))
         ],
       ),
     );
