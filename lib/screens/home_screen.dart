@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learning_system/functions/generate_random_id.dart';
-import 'package:learning_system/models/problem_model.dart';
+import 'package:learning_system/functions/select_problem_type.dart';
 import 'package:learning_system/providers/problems_provider.dart';
 
 import '../constants.dart';
@@ -29,17 +28,14 @@ class HomeScreen extends ConsumerWidget {
               itemCount: _problemsProvider.problems.length,
               itemBuilder: (BuildContext context, int index) => ListTile(
                 title: Text(_problemsProvider.problems[index].name),
-                subtitle: Text(_problemsProvider.problems[index].id),
+                subtitle: Text(_problemsProvider.problems[index].type),
               ),
             ),
       floatingActionButton: FloatingActionButton(
         child: const Text('+'),
         tooltip: 'Add Problem',
         onPressed: () {
-          Problem _newProblem = Problem(generateRandomNum(), '');
-          _problemsProvider.addProblem(_newProblem);
-          Navigator.of(context)
-              .pushNamed('/add_problem_screen', arguments: _newProblem.id);
+          selectProblemType(context, _problemsProvider);
         },
       ),
     );

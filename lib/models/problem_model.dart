@@ -2,13 +2,14 @@ class Problem {
   String id = '';
   String name = '';
   String head = '';
-  List<String> choices = [];
-  List<String> images = [];
+  String type = '';
+  // List<Map<String, bool>> choices = [];
+  // List<String> images = [];
 
-  Problem(this.id, this.name,
-      {this.head = '', this.choices = const [], this.images = const []});
-
-  void setValues() {
-    choices.add('15');
-  }
+  Problem(
+    this.id,
+    this.name,
+    this.head,
+    this.type,
+  );
 }

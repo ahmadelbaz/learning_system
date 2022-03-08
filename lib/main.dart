@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learning_system/screens/add_problem_screen.dart';
+import 'package:learning_system/screens/add_mcq_problem_screen.dart';
+import 'package:learning_system/screens/add_tof_problem_screen.dart';
 import 'package:learning_system/screens/home_screen.dart';
 
 void main() {
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/': (ctx) => const HomeScreen(),
-        '/add_problem_screen': (ctx) => const AddProblemScreen(),
+        '/add_mcq_problem_screen': (ctx) => const AddMCQProblemScreen(),
+        '/add_tof_problem_screen': (ctx) => const AddTOFProblemScreen(),
       },
     );
   }

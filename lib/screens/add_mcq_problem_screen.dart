@@ -7,15 +7,15 @@ import 'package:learning_system/screens/home_screen.dart';
 
 final isTrueStateProvider = StateProvider<bool>((ref) => false);
 
-class AddProblemScreen extends ConsumerWidget {
-  const AddProblemScreen({Key? key}) : super(key: key);
+class AddMCQProblemScreen extends ConsumerWidget {
+  const AddMCQProblemScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ref) {
     // mediaquery for responsive sizes
     final _size = MediaQuery.of(context).size;
     // watching the providers
-    final _problemsProvider = ref.watch(problemsChangeNotifierProvider);
+    final _mcqProblemsProvider = ref.watch(problemsChangeNotifierProvider);
     var _isTrue = ref.watch(isTrueStateProvider);
     // get the arguments from navigation
     final _args = ModalRoute.of(context)!.settings.arguments as String;
@@ -30,9 +30,9 @@ class AddProblemScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
-        title: Text(_problemsProvider.getProblemById(_args).name.isEmpty
+        title: Text(_mcqProblemsProvider.getProblemById(_args).name.isEmpty
             ? 'New Problem'
-            : _problemsProvider.getProblemById(_args).name),
+            : _mcqProblemsProvider.getProblemById(_args).name),
       ),
       body: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -42,9 +42,9 @@ class AddProblemScreen extends ConsumerWidget {
           ),
           Center(
             child: Text(
-              _problemsProvider.getProblemById(_args).head.isEmpty
+              _mcqProblemsProvider.getProblemById(_args).head.isEmpty
                   ? 'Add something'
-                  : _problemsProvider.getProblemById(_args).head,
+                  : _mcqProblemsProvider.getProblemById(_args).head,
               style: const TextStyle(fontSize: 18),
             ),
           ),
@@ -59,16 +59,18 @@ class AddProblemScreen extends ConsumerWidget {
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 itemCount:
-                    _problemsProvider.getProblemById(_args).choices.length,
+                    _mcqProblemsProvider.getProblemById(_args).choices.length,
                 itemBuilder: (context, index) {
                   return SizedBox(
                     width: _size.width * 0.4,
                     child: RadioListTile(
                       title: FittedBox(
                         child: Text(
-                          _problemsProvider
+                          _mcqProblemsProvider
                               .getProblemById(_args)
-                              .choices[index],
+                              .choices[index]
+                              .keys
+                              .first,
                           style: const TextStyle(fontSize: 22),
                         ),
                       ),
@@ -93,7 +95,7 @@ class AddProblemScreen extends ConsumerWidget {
                       labelText: 'Problem Name',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25.0),
-                        borderSide: const BorderSide(),
+                        // borderSide: const BorderSide(),
                       ),
                     ),
                   ),
@@ -103,7 +105,7 @@ class AddProblemScreen extends ConsumerWidget {
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      _problemsProvider.editName(
+                      _mcqProblemsProvider.editName(
                           _args, _nameTextEditingController.text);
                     },
                     child: const Text('Add'))
@@ -131,7 +133,7 @@ class AddProblemScreen extends ConsumerWidget {
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      _problemsProvider.editHead(
+                      _mcqProblemsProvider.editHead(
                           _args, _headTextEditingController.text);
                     },
                     child: const Text('Add'))
@@ -160,13 +162,16 @@ class AddProblemScreen extends ConsumerWidget {
                               ),
                             ),
                           ),
-                          Checkbox(
-                              value: _isTrue,
-                              onChanged: (value) {
-                                setState(() {
-                                  _isTrue = value!;
-                                });
-                              })
+                          Expanded(
+                            child: CheckboxListTile(
+                                title: const Text('True?'),
+                                value: _isTrue,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _isTrue = value!;
+                                  });
+                                }),
+                          )
                         ],
                       ),
                       actions: [
@@ -179,8 +184,8 @@ class AddProblemScreen extends ConsumerWidget {
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
-                            _problemsProvider.addChoice(
-                                _args, _textValueTextEditingController.text);
+                            _mcqProblemsProvider.addChoice(_args,
+                                _textValueTextEditingController.text, _isTrue);
                           },
                           child: const Text('Add'),
                         ),
