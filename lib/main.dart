@@ -18,8 +18,14 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Learning System',
       theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
+        primarySwatch: Colors.teal,
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primaryColor: Colors.teal,
+        primarySwatch: Colors.teal,
+      ),
+      themeMode: ThemeMode.dark,
       routes: {
         '/': (ctx) => const HomeScreen(),
         '/add_mcq_problem_screen': (ctx) => const AddMCQProblemScreen(),

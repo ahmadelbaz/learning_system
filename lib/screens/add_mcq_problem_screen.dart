@@ -2,10 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learning_system/constants.dart';
+import 'package:learning_system/functions/add_choice.dart';
 import 'package:learning_system/screens/home_screen.dart';
 
 final isTrueStateProvider = StateProvider<bool>((ref) => false);
+
+final noOfGeneratedProblemsStateProvider =
+    StateProvider<TextEditingController>((ref) => TextEditingController());
 
 class AddMCQProblemScreen extends ConsumerWidget {
   const AddMCQProblemScreen({Key? key}) : super(key: key);
@@ -17,6 +20,8 @@ class AddMCQProblemScreen extends ConsumerWidget {
     // watching the providers
     final _mcqProblemsProvider = ref.watch(problemsChangeNotifierProvider);
     var _isTrue = ref.watch(isTrueStateProvider);
+    var _noOfGeneratedProblemsTextEditingController =
+        ref.watch(noOfGeneratedProblemsStateProvider.state);
     // get the arguments from navigation
     final _args = ModalRoute.of(context)!.settings.arguments as String;
     log(_args);
@@ -27,8 +32,11 @@ class AddMCQProblemScreen extends ConsumerWidget {
     // controller for problem head textfield
     TextEditingController _textValueTextEditingController =
         TextEditingController();
+    // controller for number of generated problems textfield
+    // TextEditingController _noOfGeneratedProblemsTextEditingController =
+    //     TextEditingController();
     return Scaffold(
-      backgroundColor: kBackgroundColor,
+      // backgroundColor: kBackgroundColor,
       appBar: AppBar(
         title: Text(_mcqProblemsProvider.getProblemById(_args).name.isEmpty
             ? 'New Problem'
@@ -140,61 +148,59 @@ class AddMCQProblemScreen extends ConsumerWidget {
               ],
             ),
           ),
-          ElevatedButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) =>
-                      StatefulBuilder(builder: (context, setState) {
-                    return AlertDialog(
-                      title: const Text('Add variable'),
-                      content: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _textValueTextEditingController,
-                              decoration: InputDecoration(
-                                labelText: 'Value',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25.0),
-                                  borderSide: const BorderSide(),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: CheckboxListTile(
-                                title: const Text('True?'),
-                                value: _isTrue,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _isTrue = value!;
-                                  });
-                                }),
-                          )
-                        ],
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    controller:
+                        _noOfGeneratedProblemsTextEditingController.state,
+                    decoration: InputDecoration(
+                      labelText: 'No. of generated problems',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        borderSide: const BorderSide(),
                       ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            _mcqProblemsProvider.addChoice(_args,
-                                _textValueTextEditingController.text, _isTrue);
-                          },
-                          child: const Text('Add'),
-                        ),
-                      ],
-                    );
-                  }),
-                );
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: _size.width * 0.02,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      _mcqProblemsProvider.editNoOfGeneratedProblems(
+                          _args,
+                          int.parse(_noOfGeneratedProblemsTextEditingController
+                              .state.text));
+                      _noOfGeneratedProblemsTextEditingController.state.text =
+                          '';
+                    },
+                    child: const Text('Add'))
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                addChoice(context, _textValueTextEditingController, _isTrue,
+                    _mcqProblemsProvider, _args);
               },
-              child: const Text('Add choice'))
+              child: const Text('Add choice'),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                _mcqProblemsProvider.generateMCQProblems(_args);
+              },
+              child: const Text('Generate Problem'),
+            ),
+          ),
         ],
       ),
     );

@@ -20,7 +20,8 @@ void selectProblemType(
                         generateRandomNum(),
                         'Problem #${_problemsProvider.problems.length + 1}',
                         '',
-                        'MCQ', []);
+                        'MCQ',
+                        1, []);
                     _problemsProvider.addMCQProblem(_newProblem);
                     Navigator.of(context).pushNamed('/add_mcq_problem_screen',
                         arguments: _newProblem.id);
@@ -35,6 +36,7 @@ void selectProblemType(
                         'Problem #${_problemsProvider.problems.length + 1}',
                         '',
                         'TOF',
+                        1,
                         false);
                     _problemsProvider.addTOFProblem(_newProblem);
                     Navigator.of(context).pushNamed('/add_tof_problem_screen',

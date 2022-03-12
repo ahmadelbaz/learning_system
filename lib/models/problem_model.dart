@@ -3,6 +3,7 @@ class Problem {
   String name = '';
   String head = '';
   String type = '';
+  int noOfGeneratedProblems = 1;
   // List<Map<String, bool>> choices = [];
   // List<String> images = [];
 
@@ -11,5 +12,6 @@ class Problem {
     this.name,
     this.head,
     this.type,
+    this.noOfGeneratedProblems,
   );
 }

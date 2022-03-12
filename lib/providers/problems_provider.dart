@@ -11,6 +11,10 @@ class ProblemsProvider extends ChangeNotifier {
   final List<MCQProblem> _mcqProblems = [];
   UnmodifiableListView get mcqProblems => UnmodifiableListView(_mcqProblems);
 
+  final List<MCQProblem> _generatedMcqProblems = [];
+  UnmodifiableListView get generatedMcqProblems =>
+      UnmodifiableListView(_generatedMcqProblems);
+
   final List<Problem> _problems = [];
   UnmodifiableListView get problems => UnmodifiableListView(_problems);
 
@@ -20,14 +24,12 @@ class ProblemsProvider extends ChangeNotifier {
   void addMCQProblem(MCQProblem problem) {
     _mcqProblems.add(problem);
     _problems.add(problem);
-    log('${_problems.length}');
     notifyListeners();
   }
 
   void addTOFProblem(TOFProblem problem) {
     _tofProblem.add(problem);
     _problems.add(problem);
-    log('${_problems.length}');
     notifyListeners();
   }
 
@@ -47,6 +49,15 @@ class ProblemsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void editNoOfGeneratedProblems(String id, int number) {
+    MCQProblem _thisProblem =
+        _mcqProblems.firstWhere((element) => element.id == id);
+    int _index = _mcqProblems.indexOf(_thisProblem);
+    _mcqProblems[_index].noOfGeneratedProblems = number;
+    log('this is numbre = $number');
+    notifyListeners();
+  }
+
   void addChoice(String id, String choice, bool isTrue) {
     MCQProblem _thisProblem =
         _mcqProblems.firstWhere((element) => element.id == id);
@@ -57,6 +68,7 @@ class ProblemsProvider extends ChangeNotifier {
     newChoices.add({choice: isTrue});
     _mcqProblems[_index].choices = newChoices;
     log(_mcqProblems[_index].choices[0].keys.first);
+    log(_mcqProblems[_index].choices[0].values.first.toString());
     notifyListeners();
   }
 
@@ -64,5 +76,32 @@ class ProblemsProvider extends ChangeNotifier {
     MCQProblem getProblem =
         _mcqProblems.firstWhere((element) => element.id == id);
     return getProblem;
+  }
+
+  void generateMCQProblems(String id) {
+    MCQProblem _thisProblem =
+        _mcqProblems.firstWhere((element) => element.id == id);
+    int _index = _mcqProblems.indexOf(_thisProblem);
+    for (int n = 0; n < _mcqProblems[_index].noOfGeneratedProblems; n++) {
+      _generatedMcqProblems.add(_thisProblem);
+    }
+    notifyListeners();
+  }
+
+  void shuffleList(String id) {
+    MCQProblem _thisProblem =
+        _mcqProblems.firstWhere((element) => element.id == id);
+    int _index = _mcqProblems.indexOf(_thisProblem);
+    _mcqProblems[_index].choices.shuffle();
+    // notifyListeners();
+  }
+
+  List<Map<dynamic, bool>> shuffledChoice(String id) {
+    MCQProblem _thisProblem =
+        _mcqProblems.firstWhere((element) => element.id == id);
+    int _index = _mcqProblems.indexOf(_thisProblem);
+    List<Map<dynamic, bool>> newList = _mcqProblems[_index].choices;
+    newList.shuffle();
+    return newList;
   }
 }
