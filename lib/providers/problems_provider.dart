@@ -21,6 +21,12 @@ class ProblemsProvider extends ChangeNotifier {
   final List<TOFProblem> _tofProblem = [];
   UnmodifiableListView get tofProblems => UnmodifiableListView(_tofProblem);
 
+  // list of choices user choose in integers,
+  // we transfere it later to string in '_answers' list
+  final List<int> _selectedChoices = [];
+  UnmodifiableListView get selectedChoices =>
+      UnmodifiableListView(_selectedChoices);
+
   void addMCQProblem(MCQProblem problem) {
     _mcqProblems.add(problem);
     _problems.add(problem);
@@ -82,8 +88,11 @@ class ProblemsProvider extends ChangeNotifier {
     MCQProblem _thisProblem =
         _mcqProblems.firstWhere((element) => element.id == id);
     int _index = _mcqProblems.indexOf(_thisProblem);
+    _mcqProblems[_index].choices.shuffle();
     for (int n = 0; n < _mcqProblems[_index].noOfGeneratedProblems; n++) {
-      _generatedMcqProblems.add(_thisProblem);
+      // _mcqProblems[_index].choices.shuffle();
+      _selectedChoices.add(-1);
+      _generatedMcqProblems.add(_mcqProblems[_index]);
     }
     notifyListeners();
   }
@@ -93,15 +102,13 @@ class ProblemsProvider extends ChangeNotifier {
         _mcqProblems.firstWhere((element) => element.id == id);
     int _index = _mcqProblems.indexOf(_thisProblem);
     _mcqProblems[_index].choices.shuffle();
+    log('shuffled !!');
     // notifyListeners();
   }
 
-  List<Map<dynamic, bool>> shuffledChoice(String id) {
-    MCQProblem _thisProblem =
-        _mcqProblems.firstWhere((element) => element.id == id);
-    int _index = _mcqProblems.indexOf(_thisProblem);
-    List<Map<dynamic, bool>> newList = _mcqProblems[_index].choices;
-    newList.shuffle();
-    return newList;
+  // we set the choice which user choose
+  void editSelectedChoices(int index, int choice) {
+    _selectedChoices[index] = choice;
+    notifyListeners();
   }
 }

@@ -10,6 +10,7 @@ final problemsChangeNotifierProvider =
     ChangeNotifierProvider<ProblemsProvider>((ref) => ProblemsProvider());
 
 final normalModeStateProvider = StateProvider<bool>((ref) => true);
+final radioStateProvider = StateProvider<int>((ref) => 0);
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -21,6 +22,7 @@ class HomeScreen extends ConsumerWidget {
     // watching the providers
     final _problemsProvider = ref.watch(problemsChangeNotifierProvider);
     var _normalModeProvider = ref.watch(normalModeStateProvider.state);
+    var _radioProvider = ref.watch(radioStateProvider.state);
     return Scaffold(
       // backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -63,6 +65,7 @@ class HomeScreen extends ConsumerWidget {
                   itemBuilder: (BuildContext context, int index1) {
                     _problemsProvider.shuffleList(
                         _problemsProvider.generatedMcqProblems[index1].id);
+                    log('First index Before = $index1');
                     return ListTile(
                       title: Text(
                           _problemsProvider.generatedMcqProblems[index1].head),
@@ -89,9 +92,14 @@ class HomeScreen extends ConsumerWidget {
                                     style: const TextStyle(fontSize: 22),
                                   ),
                                 ),
-                                value: false,
-                                groupValue: true,
-                                onChanged: (value) {},
+                                value: index2,
+                                groupValue:
+                                    _problemsProvider.selectedChoices[index1],
+                                onChanged: (value) {
+                                  _problemsProvider.editSelectedChoices(
+                                      index1, int.parse(value.toString()));
+                                  log('value = $value');
+                                },
                               ),
                             );
                           },
