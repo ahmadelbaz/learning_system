@@ -4,8 +4,6 @@ class Problem {
   String head = '';
   String type = '';
   int noOfGeneratedProblems = 1;
-  // List<Map<String, bool>> choices = [];
-  // List<String> images = [];
 
   Problem(
     this.id,

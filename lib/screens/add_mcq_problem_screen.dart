@@ -1,12 +1,20 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learning_system/functions/add_choice.dart';
 import 'package:learning_system/screens/home_screen.dart';
 
+// state provider to check if choice is true or not
 final isTrueStateProvider = StateProvider<bool>((ref) => false);
-
+// state provider for controller for name textfield
+final nameTextEditingController =
+    StateProvider<TextEditingController>((ref) => TextEditingController());
+// state provider for controller for problem head textfield
+final headTextEditingController =
+    StateProvider<TextEditingController>((ref) => TextEditingController());
+// state provider for controller for problem head textfield
+final textValueTextEditingController =
+    StateProvider<TextEditingController>((ref) => TextEditingController());
+// state provider for controller for number of generated problems textfield
 final noOfGeneratedProblemsStateProvider =
     StateProvider<TextEditingController>((ref) => TextEditingController());
 
@@ -22,19 +30,13 @@ class AddMCQProblemScreen extends ConsumerWidget {
     var _isTrue = ref.watch(isTrueStateProvider);
     var _noOfGeneratedProblemsTextEditingController =
         ref.watch(noOfGeneratedProblemsStateProvider.state);
+    var _nameTextEditingController = ref.watch(nameTextEditingController.state);
+    var _headTextEditingController = ref.watch(headTextEditingController.state);
+    var _textValueTextEditingController =
+        ref.watch(textValueTextEditingController.state);
     // get the arguments from navigation
     final _args = ModalRoute.of(context)!.settings.arguments as String;
-    log(_args);
-    // controller for name textfield
-    TextEditingController _nameTextEditingController = TextEditingController();
-    // controller for problem head textfield
-    TextEditingController _headTextEditingController = TextEditingController();
-    // controller for problem head textfield
-    TextEditingController _textValueTextEditingController =
-        TextEditingController();
-    // controller for number of generated problems textfield
-    // TextEditingController _noOfGeneratedProblemsTextEditingController =
-    //     TextEditingController();
+
     return Scaffold(
       // backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -63,31 +65,32 @@ class AddMCQProblemScreen extends ConsumerWidget {
             width: _size.width,
             height: _size.height * 0.1,
             child: ListView.builder(
-                physics: const ClampingScrollPhysics(),
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemCount:
-                    _mcqProblemsProvider.getProblemById(_args).choices.length,
-                itemBuilder: (context, index) {
-                  return SizedBox(
-                    width: _size.width * 0.4,
-                    child: RadioListTile(
-                      title: FittedBox(
-                        child: Text(
-                          _mcqProblemsProvider
-                              .getProblemById(_args)
-                              .choices[index]
-                              .keys
-                              .first,
-                          style: const TextStyle(fontSize: 22),
-                        ),
+              physics: const ClampingScrollPhysics(),
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              itemCount:
+                  _mcqProblemsProvider.getProblemById(_args).choices.length,
+              itemBuilder: (context, index) {
+                return SizedBox(
+                  width: _size.width * 0.4,
+                  child: RadioListTile(
+                    title: FittedBox(
+                      child: Text(
+                        _mcqProblemsProvider
+                            .getProblemById(_args)
+                            .choices[index]
+                            .keys
+                            .first,
+                        style: const TextStyle(fontSize: 22),
                       ),
-                      value: false,
-                      groupValue: true,
-                      onChanged: (value) {},
                     ),
-                  );
-                }),
+                    value: false,
+                    groupValue: true,
+                    onChanged: (value) {},
+                  ),
+                );
+              },
+            ),
           ),
           SizedBox(
             height: _size.height * 0.02,
@@ -98,12 +101,12 @@ class AddMCQProblemScreen extends ConsumerWidget {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: _nameTextEditingController,
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: _nameTextEditingController.state,
                     decoration: InputDecoration(
                       labelText: 'Problem Name',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25.0),
-                        // borderSide: const BorderSide(),
                       ),
                     ),
                   ),
@@ -114,7 +117,8 @@ class AddMCQProblemScreen extends ConsumerWidget {
                 ElevatedButton(
                     onPressed: () {
                       _mcqProblemsProvider.editName(
-                          _args, _nameTextEditingController.text);
+                          _args, _nameTextEditingController.state.text);
+                      _nameTextEditingController.state.text = '';
                     },
                     child: const Text('Add'))
               ],
@@ -126,7 +130,8 @@ class AddMCQProblemScreen extends ConsumerWidget {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: _headTextEditingController,
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: _headTextEditingController.state,
                     decoration: InputDecoration(
                       labelText: 'Problem head',
                       border: OutlineInputBorder(
@@ -142,7 +147,8 @@ class AddMCQProblemScreen extends ConsumerWidget {
                 ElevatedButton(
                     onPressed: () {
                       _mcqProblemsProvider.editHead(
-                          _args, _headTextEditingController.text);
+                          _args, _headTextEditingController.state.text);
+                      _headTextEditingController.state.text = '';
                     },
                     child: const Text('Add'))
               ],
@@ -186,8 +192,8 @@ class AddMCQProblemScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () {
-                addChoice(context, _textValueTextEditingController, _isTrue,
-                    _mcqProblemsProvider, _args);
+                addChoice(context, _textValueTextEditingController.state,
+                    _isTrue, _mcqProblemsProvider, _args);
               },
               child: const Text('Add choice'),
             ),
