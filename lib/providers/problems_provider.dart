@@ -4,31 +4,47 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:learning_system/models/mcq_problem_model.dart';
 import 'package:learning_system/models/problem_model.dart';
+import 'package:learning_system/models/solve_problem_model.dart';
 import 'package:learning_system/models/trueOrFalse_problem_model.dart';
 
 class ProblemsProvider extends ChangeNotifier {
   // all problems we have
+  final List<Problem> _problems = [];
+
+  UnmodifiableListView get problems => UnmodifiableListView(_problems);
+
+  // all mcq problems we have
   final List<MCQProblem> _mcqProblems = [];
   UnmodifiableListView get mcqProblems => UnmodifiableListView(_mcqProblems);
 
   final List<MCQProblem> _generatedMcqProblems = [];
+
   UnmodifiableListView get generatedMcqProblems =>
       UnmodifiableListView(_generatedMcqProblems);
 
-  final List<Problem> _problems = [];
-  UnmodifiableListView get problems => UnmodifiableListView(_problems);
+  // all mcq problems we have
+  final List<SolveProblem> _solveProblems = [];
+  UnmodifiableListView get solveProblems => UnmodifiableListView(_solveProblems);
 
   final List<TOFProblem> _tofProblem = [];
+
   UnmodifiableListView get tofProblems => UnmodifiableListView(_tofProblem);
 
   // list of choices user choose in integers,
-  // we transfere it later to string in '_answers' list
+  // we transfer it later to string in '_answers' list
   final List<int> _selectedChoices = [];
+
   UnmodifiableListView get selectedChoices =>
       UnmodifiableListView(_selectedChoices);
 
   void addMCQProblem(MCQProblem problem) {
     _mcqProblems.add(problem);
+    _problems.add(problem);
+    notifyListeners();
+  }
+
+  void addSolveProblem(SolveProblem problem) {
+    _solveProblems.add(problem);
     _problems.add(problem);
     notifyListeners();
   }
@@ -40,18 +56,25 @@ class ProblemsProvider extends ChangeNotifier {
   }
 
   void editName(String id, String name) {
-    MCQProblem _thisProblem =
-        _mcqProblems.firstWhere((element) => element.id == id);
-    int _index = _mcqProblems.indexOf(_thisProblem);
-    _mcqProblems[_index].name = name;
+    Problem _thisProblem =
+        _problems.firstWhere((element) => element.id == id);
+    int _index = _problems.indexOf(_thisProblem);
+    _problems[_index].name = name;
     notifyListeners();
   }
 
   void editHead(String id, String head) {
-    MCQProblem _thisProblem =
-        _mcqProblems.firstWhere((element) => element.id == id);
-    int _index = _mcqProblems.indexOf(_thisProblem);
-    _mcqProblems[_index].head = head;
+    Problem _thisProblem =
+    _problems.firstWhere((element) => element.id == id);
+    int _index = _problems.indexOf(_thisProblem);
+    _problems[_index].head = head;
+    notifyListeners();
+  }
+
+  void setSolveAnswer(String id, String answer){
+    SolveProblem _thisProblem = _solveProblems.firstWhere((element) => element.id == id);
+    int _index = _solveProblems.indexOf(_thisProblem);
+    _solveProblems[_index].answer = answer;
     notifyListeners();
   }
 
